@@ -5,17 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="BT FIT Rețete">
-<meta name="theme-color" content="#1b3a2f">
-<title>BT FIT &middot; Rețete &amp; Calorii</title>
+<meta name="apple-mobile-web-app-title" content="FitApp">
+<meta name="theme-color" content="#0d2a4a">
+<meta name="description" content="FitApp - retete sanatoase din cartile BT FIT, calculator calorii si macronutrienti">
+<title>FitApp</title>
 <style>
 
 :root{
-  --green-900:#102a21;
-  --green-800:#163d30;
-  --green-700:#1f5440;
-  --green-600:#2b6f54;
-  --green-500:#3c9170;
+  --green-900:#0d2a4a;
+  --green-800:#123f66;
+  --green-700:#1a5c93;
+  --green-600:#2878b8;
+  --green-500:#4a9bd6;
   --cream:#faf6ee;
   --cream-2:#f1ead9;
   --ink:#1c241f;
@@ -311,7 +312,7 @@ body{padding-bottom:0;}
   position:relative;
 }
 .navitem .ic{font-size:21px;line-height:1;}
-.navitem.active{color:var(--green-700);background:#eefaf3;}
+.navitem.active{color:var(--green-700);background:#eaf4fc;}
 .fab{bottom:calc(84px + var(--safe-bottom));}
 
 /* ---------- Calculator / profile ---------- */
@@ -363,7 +364,7 @@ body{padding-bottom:0;}
 .scenario-card{
   background:#fff;border:2px solid var(--line);border-radius:16px;padding:16px;position:relative;
 }
-.scenario-card.primary{border-color:var(--green-600);background:linear-gradient(135deg,#eefaf3,#ffffff);}
+.scenario-card.primary{border-color:var(--green-600);background:linear-gradient(135deg,#eaf4fc,#ffffff);}
 .scenario-card .tag{
   position:absolute;top:-10px;right:16px;background:var(--green-700);color:#fff;font-size:10.5px;
   font-weight:800;padding:4px 11px;border-radius:999px;letter-spacing:0.2px;
@@ -391,9 +392,40 @@ body{padding-bottom:0;}
 .macrobar-legend span{display:flex;align-items:center;gap:5px;}
 .legend-dot{width:9px;height:9px;border-radius:3px;display:inline-block;}
 .goal-compare{
-  background:#eefaf3;border:1px solid #cdeedb;color:#184d35;padding:10px 12px;border-radius:10px;
+  background:#eaf4fc;border:1px solid #bfe0f5;color:#0f3a5c;padding:10px 12px;border-radius:10px;
   font-size:12.8px;margin-top:10px;line-height:1.5;
 }
+
+/* ---------- Home tab ---------- */
+.home-hero{
+  background:linear-gradient(135deg, var(--green-900), var(--green-700));
+  color:#fff;border-radius:18px;padding:26px 22px;text-align:center;margin-bottom:18px;
+  box-shadow:var(--shadow);
+}
+.home-emoji{font-size:38px;margin-bottom:8px;}
+.home-hero h2{margin:0 0 8px;font-size:21px;}
+.home-hero p{margin:0;font-size:13.5px;line-height:1.55;color:#dbe9f5;max-width:420px;margin:0 auto;}
+.home-actions{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.home-card{
+  background:#fff;border:1px solid #f0ead7;border-radius:14px;padding:14px 16px;
+  display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);cursor:pointer;
+}
+.home-card:active{transform:scale(0.98);}
+.home-card-ic{
+  width:46px;height:46px;border-radius:12px;background:var(--cream-2);
+  display:flex;align-items:center;justify-content:center;font-size:21px;flex:0 0 auto;
+}
+.home-card-body{flex:1;min-width:0;}
+.home-card-body h3{margin:0 0 2px;font-size:14.5px;color:var(--ink);}
+.home-card-body p{margin:0;font-size:12.3px;color:var(--muted);line-height:1.4;}
+.home-card-arrow{font-size:18px;color:var(--green-600);flex:0 0 auto;}
+.home-stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.home-stat{
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;
+  text-align:center;flex:1 1 90px;
+}
+.home-stat .n{font-size:18px;font-weight:800;color:var(--green-800);}
+.home-stat .l{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:2px;}
 
 </style>
 </head>
@@ -435,7 +467,7 @@ body{padding-bottom:0;}
     calMin: 0, calMax: 600,
     timeMin: 0, timeMax: 180,
     excludeAllergens: [],
-    mainTab: 'retete', // retete | favorite | calorii
+    mainTab: 'acasa', // acasa | retete | favorite | calorii
     sort: 'relevanta',
   };
 
@@ -645,14 +677,21 @@ body{padding-bottom:0;}
     return {Rapide:'⚡', Post:'🌿', 'Internațional':'🌍', 'Tradițional':'🏠', 'Sărbători':'🎄'}[book] || '🍲';
   }
 
+  var TITLE_MAP = {
+    acasa: '💙 FitApp',
+    retete: '🍽️ Rețete',
+    favorite: '⭐ Favorite',
+    calorii: '🧮 Calorii &amp; Macro',
+  };
+
   function tplShell(list){
-    var showSearch = state.mainTab !== 'calorii';
+    var showSearch = (state.mainTab === 'retete' || state.mainTab === 'favorite');
     return '' +
       '<div class="topbar">' +
-        '<h1>'+(state.mainTab==='calorii' ? '🧮 Calorii &amp; Macro' : '🍽️ BT FIT · Rețete')+'</h1>' +
+        '<h1>'+TITLE_MAP[state.mainTab]+'</h1>' +
         (state.mainTab==='calorii' ?
           '<div class="sub">Estimare orientativă a necesarului tău caloric</div>' :
-          '<div class="sub">'+RECIPES.length+' rețete din 5 cărți BT FIT</div>') +
+          (state.mainTab==='acasa' ? '' : '<div class="sub">'+RECIPES.length+' rețete din 5 cărți BT FIT</div>')) +
         (showSearch ? (
           '<div class="searchwrap">' +
             '<input id="searchInput" type="search" placeholder="Caută rețetă sau ingredient..." value="'+escapeHtml(state.search)+'">' +
@@ -669,10 +708,11 @@ body{padding-bottom:0;}
       '</div>' +
       '<div class="content">' + mainTabContent(list) + '</div>' +
       tplBottomNav() +
-      (state.mainTab!=='calorii' ? '<button class="fab hidden" id="scrollTopBtn" aria-label="Sus">↑</button>' : '');
+      ((state.mainTab==='retete' || state.mainTab==='favorite') ? '<button class="fab hidden" id="scrollTopBtn" aria-label="Sus">↑</button>' : '');
   }
 
   function mainTabContent(list){
+    if(state.mainTab==='acasa') return tplHomeTab();
     if(state.mainTab==='calorii') return tplCalorieTab();
     return (state.excludeAllergens.length ? '<div class="allergy-banner">🚫 Ascunse rețete cu: '+state.excludeAllergens.map(id=>COMMON_ALLERGENS.find(a=>a.id===id).label).join(', ')+'</div>' : '') +
       tplListBlock(list);
@@ -684,9 +724,56 @@ body{padding-bottom:0;}
       return '<div class="navitem'+(state.mainTab===id?' active':'')+'" data-navtab="'+id+'"><span class="ic">'+icon+'</span><span>'+label+'</span></div>';
     }
     return '<div class="bottomnav">' +
+      item('acasa','🏠','Acasă') +
       item('retete','🍽️','Rețete') +
       item('favorite','⭐','Favorite'+(favCount?(' ('+favCount+')'):'')) +
       item('calorii','🧮','Calorii') +
+    '</div>';
+  }
+
+  function goToTab(tab){
+    state.mainTab = tab;
+    window.scrollTo(0,0);
+    render();
+  }
+
+  function tplHomeTab(){
+    var favCount = getFavs().length;
+    var bookCounts = BOOKS.map(function(b){
+      return {book:b, n: RECIPES.filter(r=>r.carte_scurt===b).length};
+    });
+    return '' +
+    '<div class="home-hero">' +
+      '<div class="home-emoji">💙</div>' +
+      '<h2>Bine ai venit în FitApp</h2>' +
+      '<p>'+RECIPES.length+' rețete sănătoase din cărțile BT FIT, organizate ca să găsești rapid ce ți se potrivește — plus un calculator orientativ de calorii și macronutrienți.</p>' +
+    '</div>' +
+    '<div class="home-actions">' +
+      '<div class="home-card" data-goto="retete">' +
+        '<div class="home-card-ic">🍽️</div>' +
+        '<div class="home-card-body"><h3>Explorează rețetele</h3><p>Caută și filtrează după carte, calorii, timp sau alergeni.</p></div>' +
+        '<div class="home-card-arrow">→</div>' +
+      '</div>' +
+      '<div class="home-card" data-goto="favorite">' +
+        '<div class="home-card-ic">⭐</div>' +
+        '<div class="home-card-body"><h3>Rețetele mele favorite</h3><p>'+(favCount ? favCount+' rețete salvate' : 'Încă nu ai salvat nicio rețetă')+'</p></div>' +
+        '<div class="home-card-arrow">→</div>' +
+      '</div>' +
+      '<div class="home-card" data-goto="calorii">' +
+        '<div class="home-card-ic">🧮</div>' +
+        '<div class="home-card-body"><h3>Necesarul tău caloric</h3><p>Calculează orientativ caloriile și macro-urile zilnice.</p></div>' +
+        '<div class="home-card-arrow">→</div>' +
+      '</div>' +
+      '<div class="home-card" id="homeSurpriseBtn">' +
+        '<div class="home-card-ic">🎲</div>' +
+        '<div class="home-card-body"><h3>Surpriză-mă</h3><p>Deschide o rețetă aleasă la întâmplare.</p></div>' +
+        '<div class="home-card-arrow">→</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="home-stats">' +
+      bookCounts.map(function(bc){
+        return '<div class="home-stat"><div class="n">'+bc.n+'</div><div class="l">'+bookEmoji(bc.book)+' '+escapeHtml(bc.book)+'</div></div>';
+      }).join('') +
     '</div>';
   }
 
@@ -765,6 +852,23 @@ body{padding-bottom:0;}
     var stb = document.getElementById('scrollTopBtn');
     if(stb) stb.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
     bindCalorieTabEvents();
+    bindHomeTabEvents();
+  }
+
+  function bindHomeTabEvents(){
+    if(state.mainTab !== 'acasa') return;
+    document.querySelectorAll('.home-card[data-goto]').forEach(function(el){
+      el.addEventListener('click', function(){
+        goToTab(el.getAttribute('data-goto'));
+      });
+    });
+    var surpriseHome = document.getElementById('homeSurpriseBtn');
+    if(surpriseHome) surpriseHome.addEventListener('click', function(){
+      var list = RECIPES;
+      var pick = list[Math.floor(Math.random()*list.length)];
+      vibrate(15);
+      openDetail(pick.id);
+    });
   }
 
   function bindCardEvents(){
